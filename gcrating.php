@@ -83,7 +83,7 @@ class GCRating extends GCBase{
 	 */
 	public function getStars($rating)
 	{
-		$str = '<ul class="star-rating" id="star-rating" data-star="'.$rating.'">';
+		$str = '<ul class="star-rating" id="star-rating" data-star="'.$rating.'" data-star-old="'.$rating.'">';
 		for ($i = 1; $i <= 5; $i++) 
 		{ 
 			if($i <= $rating) $str.= '<li class="active" data-index="'.$i.'"></li>';

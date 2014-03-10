@@ -2,23 +2,17 @@ jQuery(document).ready(function(){
 	jQuery('#star-rating li').click(function(){
 		var li_index = parseInt(jQuery(this).attr('data-index'));
 		jQuery('#star-rating').attr('data-star', li_index);
-		jQuery('#star-rating li').each(function(index){
-			setActiveStar(jQuery(this), index, li_index);
-		});
+		setActiveStar('#star-rating li', li_index);
 	});
 
 	jQuery('#star-rating li').hover(function(){
 		var li_index = parseInt(jQuery(this).attr('data-index'));		
-		jQuery('#star-rating li').each(function(index){
-			setActiveStar(jQuery(this), index, li_index);
-		});
+		setActiveStar('#star-rating li', li_index);
 	});
 
 	jQuery('#star-rating').mouseleave(function() {
 		var li_index = parseInt(jQuery('#star-rating').attr('data-star'));
-		jQuery('#star-rating li').each(function(index){
-			setActiveStar(jQuery(this), index, li_index);
-		});
+		setActiveStar('#star-rating li', li_index);
 	});
 
 	jQuery('#rate-button').click(function(){ rate(); });
@@ -26,20 +20,21 @@ jQuery(document).ready(function(){
 
 /**
  * Set active star
- * @param object  obj 
- * @param integer i   
- * @param integer x   
+ * @param string  dom
+ * @param integer index   
  */
-function setActiveStar(obj, i, x)
+function setActiveStar(dom, index)
 {
-	if(i <= x - 1)
-	{
-		if(!obj.hasClass('active')) obj.addClass('active');
-	}
-	else
-	{
-		if(obj.hasClass('active'))	obj.removeClass('active');
-	}
+	jQuery(dom).each(function(i){
+		if(i <= index - 1)
+		{
+			if(!jQuery(this).hasClass('active')) jQuery(this).addClass('active');
+		}
+		else
+		{
+			if(jQuery(this).hasClass('active'))	jQuery(this).removeClass('active');
+		}
+	});
 }
 
 /**
@@ -47,9 +42,10 @@ function setActiveStar(obj, i, x)
  */
 function rate()
 {
-	var rate = parseInt(jQuery('#star-rating').attr('data-star'));
-	var id   = parseInt(jQuery('#rate-block').attr('data-id'));
-	var ip   = jQuery('#rate-block').attr('data-ip');
+	var rate     = parseInt(jQuery('#star-rating').attr('data-star'));
+	var rate_old = parseInt(jQuery('#star-rating').attr('data-star-old'));
+	var id       = parseInt(jQuery('#rate-block').attr('data-id'));
+	var ip       = jQuery('#rate-block').attr('data-ip');
 
 	jQuery.ajax({
 		type: "POST",
@@ -63,11 +59,16 @@ function rate()
 		{
 			if(data.msg == 'OK')
 			{
+				var li_index = parseInt(data.rate);
+				jQuery('#star-rating').attr('data-star', li_index);
+				setActiveStar('#star-rating li', li_index);
+
 				alert('Congratulations! You set a rating ' + data.rate + '.');
 			}
 			else
 			{
 				alert('You have already rated this post!');				
+				setActiveStar('#star-rating li', rate_old);
 			}
 		}
 	});
