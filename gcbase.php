@@ -142,6 +142,17 @@ if(!class_exists('GCBase'))
 		}
 
 		/**
+		 * Launch session
+		 */
+		public function launch_session()
+		{
+			if(session_id() == '')
+			{
+				session_start();				
+			}
+		}
+
+		/**
 		 * Get constant name
 		 * @return string
 		 */

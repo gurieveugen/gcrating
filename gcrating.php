@@ -26,6 +26,12 @@ class GCRating extends GCBase{
 	{	
 		parent::__construct(self::LANG_FILE_EN);
 		// =========================================================
+		// Hooks
+		// =========================================================
+		add_action('wp_ajax_rate', array($this, 'rateAJAX'));
+		add_action('wp_ajax_nopriv_rate', array($this, 'rateAJAX'));
+
+		// =========================================================
 		// Add JAVA and CSS
 		// =========================================================		
 		// =========================================================
@@ -54,14 +60,16 @@ class GCRating extends GCBase{
 	 */
 	public function getRateBlock($post_id)
 	{
-		$p = get_post($post_id);
+		$p        = get_post($post_id);
+		$rate     = get_post_meta($post_id, 'rate', true);
+		$rate_val = intval($rate['value']);
 		
 		$str = '';
-		$str.= '<section class="rate-block">';
+		$str.= '<section id="rate-block" class="rate-block" data-id="'.$post_id.'" data-ip="'.$this->getIP().'">';
 		$str.= '	<p>'.sprintf($this->l('block_title'), $p->post_title).'</p>';
 		$str.= '	<div class="cf">';
-		$str.= $this->getStars(4);
-		$str.= '		<button type="button" class="btn"><span>'.$this->l('button').'</span></button>';
+		$str.= $this->getStars($rate_val);
+		$str.= '		<button type="button" class="btn" id="rate-button"><span>'.$this->l('button').'</span></button>';
 		$str.= '	</div>';
 		$str.= '</section>';
 
@@ -83,6 +91,55 @@ class GCRating extends GCBase{
 		}
 		$str.= '</ul>';
 		return $str;
+	}
+
+	/**
+	 * Get IP address visitor
+	 * @return string
+	 */
+	public function getIP() 
+	{
+	    $ip = $_SERVER['REMOTE_ADDR'];
+	 
+	    if (!empty($_SERVER['HTTP_CLIENT_IP'])) 
+	    {
+	        $ip = $_SERVER['HTTP_CLIENT_IP'];
+	    } 
+	    else if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) 
+	    {
+	        $ip = $_SERVER['HTTP_X_FORWARDED_FOR'];
+	    }
+	 
+	    return $ip;
+	}
+
+	/**
+	 * Rate post
+	 */
+	public function rateAJAX()
+	{	
+		$id           = intval($_POST['id']);
+		$ip           = $_POST['ip'];
+		$rate_val_new = floatval($_POST['rate']);
+		$rate         = get_post_meta($id, 'rate', true);
+		$rate_val_old = floatval($rate['value']);
+
+		if(!isset($rate['ip']) || !in_array($ip, $rate['ip']))
+		{			
+			$rate['value'] = ( $rate_val_old + $rate_val_new ) / 2;
+			$json['msg']   = 'OK';
+			$json['rate']  = $rate['value'];
+			$rate['ip'][]  = $ip;
+
+			update_post_meta($id, 'rate', $rate);
+		}
+		else
+		{
+			$json['msg']   = 'exist';
+		}
+
+		echo json_encode($json);
+		die();
 	}
 }
 // =========================================================
