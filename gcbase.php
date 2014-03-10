@@ -8,7 +8,7 @@ if(!class_exists('GCBase'))
 		// / /__/ /_/ / / / (__  ) /_/ /_/ / / / / /_(__  ) 
 		// \___/\____/_/ /_/____/\__/\__,_/_/ /_/\__/____/  
 		const NONE             = 666;
-		const PLUGIN_NAME      = 'gcevents';
+		const PLUGIN_NAME      = 'gcrating';
 		const LANGUAGES_FOLDER = 'languages';
 
 		//                __  _                 

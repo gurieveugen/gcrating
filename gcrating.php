@@ -47,24 +47,42 @@ class GCRating extends GCBase{
 		add_theme_support('post-thumbnails');		
 	}
 
-	public getRateBlock($post_id)
+	/**
+	 * Get rating HTML block
+	 * @param  integer $post_id
+	 * @return string
+	 */
+	public function getRateBlock($post_id)
 	{
 		$p = get_post($post_id);
-		?>
-		<section class="rate-block">
-			<p><?php prinf($this->l['block_title'], $p->post_title); ?></p>
-			<div class="cf">
-				<ul class="star-rating">
-					<li class="active"></li>
-					<li class="active"></li>
-					<li class="active"></li>
-					<li class="active"></li>
-					<li></li>
-				</ul>
-				<button type="button" class="btn"><span>Rate</span></button>
-			</div>
-		</section>
-		<?php
+		
+		$str = '';
+		$str.= '<section class="rate-block">';
+		$str.= '	<p>'.sprintf($this->l('block_title'), $p->post_title).'</p>';
+		$str.= '	<div class="cf">';
+		$str.= $this->getStars(4);
+		$str.= '		<button type="button" class="btn"><span>'.$this->l('button').'</span></button>';
+		$str.= '	</div>';
+		$str.= '</section>';
+
+		return $str; 
+	}
+
+	/**
+	 * Get Stars from rating
+	 * @param  integer $rating 
+	 * @return string         
+	 */
+	public function getStars($rating)
+	{
+		$str = '<ul class="star-rating" id="star-rating" data-star="'.$rating.'">';
+		for ($i = 1; $i <= 5; $i++) 
+		{ 
+			if($i <= $rating) $str.= '<li class="active" data-index="'.$i.'"></li>';
+			else $str.= '<li data-index="'.$i.'"></li>';
+		}
+		$str.= '</ul>';
+		return $str;
 	}
 }
 // =========================================================
