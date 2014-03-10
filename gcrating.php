@@ -125,8 +125,9 @@ class GCRating extends GCBase{
 		$rate_val_old = floatval($rate['value']);
 
 		if(!isset($rate['ip']) || !in_array($ip, $rate['ip']))
-		{			
-			$rate['value'] = ( $rate_val_old + $rate_val_new ) / 2;
+		{	
+			if($rate_val_old > 0) $rate['value'] = ( $rate_val_old + $rate_val_new ) / 2;
+			else $rate['value'] = $rate_val_new;
 			$json['msg']   = 'OK';
 			$json['rate']  = $rate['value'];
 			$rate['ip'][]  = $ip;
