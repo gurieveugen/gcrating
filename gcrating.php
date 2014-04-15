@@ -8,6 +8,7 @@ Author: Guriev Creative
 Author URI: http://www.gurievcreative.com
 */
 require_once dirname(__FILE__).'/gcbase.php';
+require_once dirname(__FILE__).'/page_ratings.php';
 
 class GCRating extends GCBase{	
 	//                          __              __      
@@ -41,13 +42,15 @@ class GCRating extends GCBase{
 		{			
 			wp_enqueue_style('admin-styles', $this->plugin_url.'/css/admin_styles.css');
 			wp_enqueue_style('font-awesome', $this->plugin_url.'/css/font-awesome.min.css');
+			wp_enqueue_script('gcrating_admin', $this->plugin_url.'/js/gcrating_admin.js', array('jquery'));
+			wp_localize_script('gcrating_admin', 'gcrating_object', array('ajaxurl' => admin_url('admin-ajax.php')));
 		}
 		// =========================================================
 		// For Admin
 		// =========================================================
 		else
 		{
-			wp_enqueue_script('gcrating', $this->plugin_url.'/js/gcrating.js', array('jquery'));
+			wp_enqueue_script('gcrating', $this->plugin_url.'/js/gcrating.js', array('jquery'));		    
 		}		
 		
 		add_theme_support('post-thumbnails');		
@@ -60,9 +63,16 @@ class GCRating extends GCBase{
 	 */
 	public function getRateBlock($post_id)
 	{
+
 		$p        = get_post($post_id);
-		$rate     = get_post_meta($post_id, 'rate', true);
-		$rate_val = intval($rate['value']);
+		$rate     = get_post_meta($post_id, 'rate', true);		
+		if(!is_user_logged_in()) $rate_val = 0;
+		else
+		{
+			$current_user = wp_get_current_user();
+			$rate_val     = floatval($rate[$current_user->ID]);
+		}
+		
 		
 		$str = '';
 		$str.= '<section id="rate-block" class="rate-block" data-id="'.$post_id.'" data-ip="'.$this->getIP().'">';
@@ -118,19 +128,24 @@ class GCRating extends GCBase{
 	 */
 	public function rateAJAX()
 	{	
-		$id           = intval($_POST['id']);
-		$ip           = $_POST['ip'];
-		$rate_val_new = floatval($_POST['rate']);
-		$rate         = get_post_meta($id, 'rate', true);
-		$rate_val_old = floatval($rate['value']);
+		if(!is_user_logged_in())
+		{
+			$json['msg'] = 'nologin';
+			echo json_encode($json);
+			die();
+		}
 
-		if(!isset($rate['ip']) || !in_array($ip, $rate['ip']))
+		$current_user = wp_get_current_user();
+		$id           = intval($_POST['id']);		
+		$rate_val     = floatval($_POST['rate']);
+		$rate         = get_post_meta($id, 'rate', true);		
+
+		if(!isset($rate[$current_user->ID]))
 		{	
-			if($rate_val_old > 0) $rate['value'] = ( $rate_val_old + $rate_val_new ) / 2;
-			else $rate['value'] = $rate_val_new;
+			$rate[$current_user->ID] = $rate_val;
+			
 			$json['msg']   = 'OK';
-			$json['rate']  = $rate['value'];
-			$rate['ip'][]  = $ip;
+			$json['rate']  = $rate_val;			
 
 			update_post_meta($id, 'rate', $rate);
 		}

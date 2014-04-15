@@ -1,17 +1,5 @@
-#adminmenu #menu-posts-gcevent .wp-menu-image:before {
-	content: "\f073";  
- 	font-family: 'FontAwesome' !important;
- 	font-size: 18px !important;
-}
-
-#adminmenu #menu-posts-member .wp-menu-image:before {
-	content: "\f0c0";  
- 	font-family: 'FontAwesome' !important;
- 	font-size: 18px !important;
-}
-
-#adminmenu #menu-posts-multimedia .wp-menu-image:before {
-	content: "\f04b";  
+#adminmenu #toplevel_page_gcrating-page_ratings .wp-menu-image:before {
+	content: "\f005";  
  	font-family: 'FontAwesome' !important;
  	font-size: 18px !important;
 }
@@ -19,49 +7,38 @@
 .gctable{
 	width: 100%;
 	margin: 0 0 50px 0;
+	border-collapse: collapse;
+	border-spacing: 0;
 }
 
-.gctable tbody tr th,
-.gctable tbody tr td{
+.gctable thead tr th{
 	text-align: left;
 }
 
-.gctable tbody tr td:first-child{
-	width: 40%;
+.gctable > thead > tr > th, .gctable > tbody > tr > th, .gctable > tfoot > tr > th, .gctable > thead > tr > td, .gctable > tbody > tr > td, .gctable > tfoot > tr > td {
+    border-top: 1px solid #DDDDDD;
+    line-height: 1.42857;
+    padding: 8px;
+    vertical-align: top;
 }
 
-.gctable select,
-.gctable input{
-	width: 50%;
+.gctable > thead > tr > th {
+    border-bottom: 2px solid #DDDDDD;
+    vertical-align: bottom;
 }
 
-fieldset.gccontrol_group legend{
-	font-weight: bold;
-	text-transform: uppercase;
+.gctable > caption + thead > tr:first-child > th, .gctable > colgroup + thead > tr:first-child > th, .gctable > thead:first-child > tr:first-child > th, .gctable > caption + thead > tr:first-child > td, .gctable > colgroup + thead > tr:first-child > td, .gctable > thead:first-child > tr:first-child > td {
+    border-top: 0 none;
 }
 
-.form-table tbody tr td select,
-.form-table tbody tr td input{
-	width: 300px;
+.gctable > tbody + tbody {
+    border-top: 2px solid #DDDDDD;
 }
 
-.gctable tbody tr td input[type=checkbox],
-.form-table tbody tr td input[type=checkbox]{
-	width: auto;
+.gctable .gctable {
+    background-color: #FFFFFF;
 }
 
-.gctable tbody tr td input.date-input,
-.form-table tbody tr td input.date-input{
-	width: 165px;
-}
-
-.gctable tbody tr td select.time-input,
-.gctable tbody tr td input.time-input,
-.form-table tbody tr td select.time-input,
-.form-table tbody tr td input.time-input{
-	width: 45px;
-}
-
-.time{
-	display: inline;
+.gctable> tbody > tr:nth-child(2n+1) > td, .gctable> tbody > tr:nth-child(2n+1) > th {
+    background-color: #FFFFFF;
 }

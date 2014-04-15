@@ -49,7 +49,7 @@ function rate()
 
 	jQuery.ajax({
 		type: "POST",
-		url: '/wp-admin/admin-ajax.php?action=rate',
+		url: getSiteFolder() + '/wp-admin/admin-ajax.php?action=rate',
 		data: {
 			rate : rate,			
 			id   : id,
@@ -63,13 +63,23 @@ function rate()
 				jQuery('#star-rating').attr('data-star', li_index);
 				setActiveStar('#star-rating li', li_index);
 
-				alert('Congratulations! You set a rating ' + data.rate + '.');
+				alert('Thanks for the feedback! You set a rating ' + data.rate + '.');
 			}
-			else
+			else if(data.msg == 'exist')
 			{
 				alert('You have already rated this post!');				
 				setActiveStar('#star-rating li', rate_old);
 			}
+			else
+			{
+				alert('Please login first.');	
+			}
 		}
 	});
+}
+
+function getSiteFolder()
+{	
+	if(typeof(SITE_FOLDER) != 'undefined') return SITE_FOLDER;
+	return '';
 }
